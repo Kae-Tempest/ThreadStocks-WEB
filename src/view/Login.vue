@@ -1,11 +1,29 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import {ref} from 'vue';
+import { useFetch} from "@composable/useFetch.ts";
+import type {Login} from "@interfaces/auth.ts";
+import {useRouter} from "vue-router";
 
-const email = ref('');
-const password = ref('');
+const router = useRouter()
+
+const payload = ref<Login>({
+  email: "",
+  password: "",
+});
 
 
-const handleLogin = () => {}
+const handleLogin = async () => {
+  try {
+    await useFetch<Login>('/login',
+        {
+          method: "POST",
+          body: JSON.stringify(payload.value),
+        })
+    await router.push("/app");
+  } catch (error) {
+    console.error('Login failed:', error);
+  }
+}
 
 </script>
 
@@ -17,29 +35,29 @@ const handleLogin = () => {}
         <div>
           <label for="email" class="block text-sm font-medium text-gray-300">Email</label>
           <input
-            id="email"
-            v-model="email"
-            type="email"
-            required
-            class="w-full px-3 py-2 mt-1 bg-gray-700 border border-gray-600 rounded-md text-white focus:outline-none focus:ring focus:ring-indigo-500/50 placeholder-gray-400"
-            placeholder="you@example.com"
+              id="email"
+              v-model="payload.email"
+              type="email"
+              required
+              class="w-full px-3 py-2 mt-1 bg-gray-700 border border-gray-600 rounded-md text-white focus:outline-none focus:ring focus:ring-indigo-500/50 placeholder-gray-400"
+              placeholder="you@example.com"
           />
         </div>
         <div>
           <label for="password" class="block text-sm font-medium text-gray-300">Password</label>
           <input
-            id="password"
-            v-model="password"
-            type="password"
-            required
-            class="w-full px-3 py-2 mt-1 bg-gray-700 border border-gray-600 rounded-md text-white focus:outline-none focus:ring focus:ring-indigo-500/50 placeholder-gray-400"
-            placeholder="••••••••"
+              id="password"
+              v-model="payload.password"
+              type="password"
+              required
+              class="w-full px-3 py-2 mt-1 bg-gray-700 border border-gray-600 rounded-md text-white focus:outline-none focus:ring focus:ring-indigo-500/50 placeholder-gray-400"
+              placeholder="••••••••"
           />
         </div>
         <div>
           <button
-            type="submit"
-            class="w-full px-4 py-2 font-bold text-white bg-indigo-600 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring focus:ring-indigo-500/50 transition-colors"
+              type="submit"
+              class="w-full px-4 py-2 font-bold text-white bg-indigo-600 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring focus:ring-indigo-500/50 transition-colors"
           >
             Sign In
           </button>
