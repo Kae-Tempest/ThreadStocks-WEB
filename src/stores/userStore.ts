@@ -44,4 +44,4 @@ export const useUserStore = defineStore("userStore", () => {
         setUser,
         getUserFromApi,
     }
-})
+}, {persist: true})
