@@ -3,14 +3,55 @@ import {onMounted, ref} from 'vue';
 import SettingsModal from '../components/SettingsModal.vue';
 import AddThreadModal from '../components/AddThreadModal.vue';
 import {useUserStore} from "../stores/userStore.ts";
+import type {Thread} from "@interfaces/thread.ts";
+import {useFetch} from "@composable/useFetch.ts";
+import ThreadCard from "../components/ThreadCard.vue";
 
 const isSettingsModalOpen = ref(false);
 const isAddThreadModalOpen = ref(false);
 const userStore = useUserStore();
+const Threads = ref<Thread[]>([]);
 
 onMounted(async () => {
   await userStore.getUserFromApi();
+  await refreshThreads();
 })
+
+const refreshThreads = async () => {
+  const res = await useFetch("/threads", {
+    method: "GET"
+  })
+  Threads.value = res as Thread[];
+}
+
+const updateThreadCount = async (thread: Thread, newCount: number) => {
+  // Optimistic update
+  const oldCount = thread.count;
+  thread.count = newCount;
+
+  try {
+    await useFetch(`/threads/${thread.ID}`, {
+      method: "PUT",
+      body: JSON.stringify({ count: newCount })
+    });
+  } catch (e) {
+    console.error(e);
+    thread.count = oldCount; // Rollback
+  }
+};
+
+const deleteThread = async (thread: Thread) => {
+  if (confirm(`Are you sure you want to delete thread ${thread.thread_id}?`)) {
+    try {
+      await useFetch(`/threads/${thread.ID}`, {
+        method: "DELETE"
+      });
+      await refreshThreads();
+    } catch (e) {
+      console.error(e);
+    }
+  }
+};
 
 const toggleSettingsModal = () => {
   isSettingsModalOpen.value = !isSettingsModalOpen.value;
@@ -18,11 +59,6 @@ const toggleSettingsModal = () => {
 
 const toggleAddThreadModal = () => {
   isAddThreadModalOpen.value = !isAddThreadModalOpen.value;
-};
-
-const addThread = (threadData: any) => {
-  console.log('New thread to add:', threadData);
-  // Logic to add a thread to be implemented later (API)
 };
 
 </script>
@@ -68,11 +104,22 @@ const addThread = (threadData: any) => {
     <AddThreadModal
       :is-open="isAddThreadModalOpen"
       @close="toggleAddThreadModal"
-      @add="addThread"
     />
     
-    <div class="max-w-4xl mx-auto bg-gray-800/50 rounded-lg border border-gray-700 p-12 text-center">
-      <p class="text-gray-400 italic">Application content coming soon...</p>
+    <div v-if="Threads.length > 0" class="max-w-6xl mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 justify-items-center">
+      <ThreadCard
+        v-for="thread in Threads"
+        :key="thread.ID"
+        :thread="thread"
+        @update:count="(newCount) => updateThreadCount(thread, newCount)"
+        @delete="deleteThread(thread)"
+        @edit="console.log('Edit', thread)"
+      />
+    </div>
+
+    <div v-else class="max-w-4xl mx-auto bg-gray-800/50 rounded-lg border border-gray-700 p-12 text-center text-gray-400 italic">
+      <p v-if="userStore.user">No threads found. Click the + button to add one!</p>
+      <p v-else>Loading...</p>
     </div>
   </div>
 </template>

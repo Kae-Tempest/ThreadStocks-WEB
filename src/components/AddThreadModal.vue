@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { ref, onMounted, onBeforeUnmount } from 'vue';
+import {ref, onMounted, onBeforeUnmount} from 'vue';
+import {useFetch} from "@composable/useFetch.ts";
 
 type Props = {
   isOpen: boolean;
@@ -9,7 +10,6 @@ const props = defineProps<Props>();
 
 const emit = defineEmits<{
   (e: 'close'): void;
-  (e: 'add', thread: any): void;
 }>();
 
 const threadName = ref('');
@@ -29,15 +29,23 @@ const handleClose = () => {
   emit('close');
 };
 
-const handleAdd = () => {
+const handleAdd = async () => {
   const newThread = {
-    name: threadName.value,
-    number: threadNumber.value,
+    thread_id: threadName.value,
+    count: threadNumber.value,
     brand: brand.value,
-    type: threadType.value === 'none' ? null : threadType.value
+    is_c: threadType.value === 'C',
+    is_e: threadType.value === 'E',
   };
-  console.log('Add a thread:', newThread);
-  emit('add', newThread);
+  try {
+    await useFetch("/threads/create", {
+      method: "POST",
+      body: JSON.stringify(newThread)
+    })
+  } catch (e) {
+    console.log(e);
+  }
+
   handleClose();
 };
 
@@ -60,38 +68,38 @@ onBeforeUnmount(() => {
   <div v-if="isOpen" class="fixed inset-0 z-50 flex items-center justify-center bg-gray-900/10 backdrop-blur-sm" @click.self="handleClose">
     <div class="bg-gray-800 border border-gray-700 p-8 rounded-lg shadow-2xl max-w-md w-full mx-4 text-white">
       <h2 class="text-xl font-bold mb-6">Add a thread</h2>
-      
+
       <div class="space-y-4">
         <!-- Thread Name -->
         <div>
           <label class="block text-sm font-medium text-gray-400 mb-1">Thread Name</label>
-          <input 
-            v-model="threadName"
-            type="text" 
-            class="w-full bg-gray-700 border border-gray-600 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-            placeholder="Ex: Embroidery Floss"
+          <input
+              v-model="threadName"
+              type="text"
+              class="w-full bg-gray-700 border border-gray-600 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              placeholder="Ex: 310"
           />
         </div>
 
         <!-- Thread Number -->
         <div>
-          <label class="block text-sm font-medium text-gray-400 mb-1">Thread Number</label>
-          <input 
-            v-model="threadNumber"
-            type="number" 
-            class="w-full bg-gray-700 border border-gray-600 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-            placeholder="Ex: 310"
+          <label class="block text-sm font-medium text-gray-400 mb-1">Thread Count</label>
+          <input
+              v-model="threadNumber"
+              type="number"
+              class="w-full bg-gray-700 border border-gray-600 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              placeholder="Ex: 2"
           />
         </div>
 
         <!-- Brand -->
         <div>
           <label class="block text-sm font-medium text-gray-400 mb-1">Brand</label>
-          <input 
-            v-model="brand"
-            type="text" 
-            class="w-full bg-gray-700 border border-gray-600 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-            placeholder="Ex: DMC"
+          <input
+              v-model="brand"
+              type="text"
+              class="w-full bg-gray-700 border border-gray-600 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              placeholder="Ex: DMC"
           />
         </div>
 
@@ -99,10 +107,10 @@ onBeforeUnmount(() => {
         <div class="space-y-2">
           <label class="block text-sm font-medium text-gray-400">Thread type</label>
           <div class="grid grid-cols-3 gap-2">
-            <button 
-              type="button"
-              @click="threadType = 'C'"
-              :class="[
+            <button
+                type="button"
+                @click="threadType = 'C'"
+                :class="[
                 'px-4 py-2 rounded-md border transition-all text-sm font-medium',
                 threadType === 'C' 
                   ? 'bg-indigo-600 border-indigo-500 text-white shadow-lg shadow-indigo-500/20' 
@@ -111,10 +119,10 @@ onBeforeUnmount(() => {
             >
               C
             </button>
-            <button 
-              type="button"
-              @click="threadType = 'E'"
-              :class="[
+            <button
+                type="button"
+                @click="threadType = 'E'"
+                :class="[
                 'px-4 py-2 rounded-md border transition-all text-sm font-medium',
                 threadType === 'E' 
                   ? 'bg-indigo-600 border-indigo-500 text-white shadow-lg shadow-indigo-500/20' 
@@ -123,10 +131,10 @@ onBeforeUnmount(() => {
             >
               E
             </button>
-            <button 
-              type="button"
-              @click="threadType = 'none'"
-              :class="[
+            <button
+                type="button"
+                @click="threadType = 'none'"
+                :class="[
                 'px-4 py-2 rounded-md border transition-all text-sm font-medium',
                 threadType === 'none' 
                   ? 'bg-indigo-600 border-indigo-500 text-white shadow-lg shadow-indigo-500/20' 
@@ -140,15 +148,15 @@ onBeforeUnmount(() => {
 
         <!-- Actions -->
         <div class="pt-6 flex space-x-3">
-          <button 
-            @click="handleClose"
-            class="flex-1 px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded transition-colors text-center font-medium"
+          <button
+              @click="handleClose"
+              class="flex-1 px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded transition-colors text-center font-medium"
           >
             Cancel
           </button>
-          <button 
-            @click="handleAdd"
-            class="flex-1 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 rounded transition-colors text-center font-medium"
+          <button
+              @click="handleAdd"
+              class="flex-1 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 rounded transition-colors text-center font-medium"
           >
             Add
           </button>
