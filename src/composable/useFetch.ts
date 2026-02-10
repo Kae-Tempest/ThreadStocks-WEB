@@ -55,13 +55,18 @@ export async function useFetch<T>(
         headers,
         credentials: "include",
     });
-    if (resp.status === 204) return resp.statusText as T;
+    if (resp.status === 204) return null as T;
 
     if (!resp.ok) {
         let errorDetail: string;
         try {
-            const errorData = await resp.json();
-            errorDetail = errorData.detail || resp.statusText;
+            const text = await resp.text();
+            if (text) {
+                const errorData = JSON.parse(text);
+                errorDetail = errorData.detail || resp.statusText;
+            } else {
+                errorDetail = resp.statusText;
+            }
         } catch (e) {
             errorDetail = resp.statusText;
         }
@@ -76,7 +81,14 @@ export async function useFetch<T>(
     }
     // Handle successful response based on responseType
     if (responseType === ResponseType.json) {
-        return await resp.json();
+        const text = await resp.text();
+        if (!text) return {} as T;
+        try {
+            return JSON.parse(text);
+        } catch (e) {
+            console.error("Failed to parse JSON:", text);
+            return {} as T;
+        }
     } else if (responseType === ResponseType.blob) {
         return (await resp.blob()) as T;
     } else if (responseType === ResponseType.text) {

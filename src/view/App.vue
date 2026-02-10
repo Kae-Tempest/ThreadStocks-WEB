@@ -2,6 +2,7 @@
 import {onMounted, ref} from 'vue';
 import SettingsModal from '../components/SettingsModal.vue';
 import AddThreadModal from '../components/AddThreadModal.vue';
+import ConfirmModal from '../components/ConfirmModal.vue';
 import {useUserStore} from "../stores/userStore.ts";
 import type {Thread} from "@interfaces/thread.ts";
 import {useFetch} from "@composable/useFetch.ts";
@@ -9,6 +10,12 @@ import ThreadCard from "../components/ThreadCard.vue";
 
 const isSettingsModalOpen = ref(false);
 const isAddThreadModalOpen = ref(false);
+const isConfirmModalOpen = ref(false);
+const confirmModalConfig = ref({
+  title: '',
+  message: '',
+  onConfirm: () => {}
+});
 const userStore = useUserStore();
 const Threads = ref<Thread[]>([]);
 
@@ -30,7 +37,7 @@ const updateThreadCount = async (thread: Thread, newCount: number) => {
   thread.count = newCount;
 
   try {
-    await useFetch(`/threads/${thread.ID}`, {
+    await useFetch(`/threads/update/${thread.ID}`, {
       method: "PUT",
       body: JSON.stringify({ count: newCount })
     });
@@ -40,17 +47,22 @@ const updateThreadCount = async (thread: Thread, newCount: number) => {
   }
 };
 
-const deleteThread = async (thread: Thread) => {
-  if (confirm(`Are you sure you want to delete thread ${thread.thread_id}?`)) {
-    try {
-      await useFetch(`/threads/${thread.ID}`, {
-        method: "DELETE"
-      });
-      await refreshThreads();
-    } catch (e) {
-      console.error(e);
+const deleteThread = (thread: Thread) => {
+  confirmModalConfig.value = {
+    title: 'Delete Thread',
+    message: `Are you sure you want to delete thread ${thread.thread_id}?`,
+    onConfirm: async () => {
+      try {
+        await useFetch(`/threads/delete/${thread.ID}`, {
+          method: "DELETE"
+        });
+        await refreshThreads();
+      } catch (e) {
+        console.error(e);
+      }
     }
-  }
+  };
+  isConfirmModalOpen.value = true;
 };
 
 const toggleSettingsModal = () => {
@@ -104,6 +116,15 @@ const toggleAddThreadModal = () => {
     <AddThreadModal
       :is-open="isAddThreadModalOpen"
       @close="toggleAddThreadModal"
+    />
+
+    <!-- Confirm modal -->
+    <ConfirmModal
+      :is-open="isConfirmModalOpen"
+      :title="confirmModalConfig.title"
+      :message="confirmModalConfig.message"
+      @close="isConfirmModalOpen = false"
+      @confirm="async () => { isConfirmModalOpen = false; await confirmModalConfig.onConfirm(); }"
     />
     
     <div v-if="Threads.length > 0" class="max-w-6xl mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 justify-items-center">

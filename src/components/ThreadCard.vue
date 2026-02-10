@@ -13,11 +13,9 @@ const emit = defineEmits<{
 }>();
 
 const displayId = computed(() => {
-  console.log(props.thread)
   let prefix = '';
   if (props.thread.is_c) prefix = 'C ';
   else if (props.thread.is_e) prefix = 'E ';
-  console.log(props.thread.is_c, props.thread.is_e, props.thread.thread_id, prefix, 'prefix');
   return `${prefix}${props.thread.thread_id}`;
 });
 
