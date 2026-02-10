@@ -1,8 +1,16 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import {onMounted, ref} from 'vue';
 import SettingsModal from '../components/SettingsModal.vue';
+import {useUserStore} from "../stores/userStore.ts";
 
 const isSettingsModalOpen = ref(false);
+const userStore = useUserStore();
+
+onMounted(async () => {
+  await userStore.getUserFromApi();
+})
+
+
 
 const toggleSettingsModal = () => {
   isSettingsModalOpen.value = !isSettingsModalOpen.value;
@@ -12,6 +20,10 @@ const addThread = () => {
   console.log('Ajouter un fil');
   // Logique pour ajouter un fil à implémenter plus tard
 };
+
+
+
+
 </script>
 
 <template>

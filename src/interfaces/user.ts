@@ -1,9 +1,9 @@
 import type {Thread} from "./thread.ts";
 
 export interface User {
-    ID: number;
-    Username: string;
-    Email: string;
-    Password: string;
-    Threads: Thread[];
+    id: number;
+    username: string;
+    email: string;
+    password: string;
+    threads: Thread[];
 }
