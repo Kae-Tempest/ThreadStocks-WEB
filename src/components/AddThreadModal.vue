@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import {ref, onMounted, onBeforeUnmount} from 'vue';
 import {useFetch} from "@composable/useFetch.ts";
+import type {ThreadDto} from "@interfaces/thread.ts";
 
 type Props = {
   isOpen: boolean;
@@ -13,13 +14,13 @@ const emit = defineEmits<{
 }>();
 
 const threadName = ref('');
-const threadNumber = ref<number | null>(null);
+const threadCount = ref<number>(0);
 const brand = ref('');
 const threadType = ref<'C' | 'E' | 'none'>('none');
 
 const resetForm = () => {
   threadName.value = '';
-  threadNumber.value = null;
+  threadCount.value = 0;
   brand.value = '';
   threadType.value = 'none';
 };
@@ -30,9 +31,9 @@ const handleClose = () => {
 };
 
 const handleAdd = async () => {
-  const newThread = {
+  const newThread: ThreadDto = {
     thread_id: threadName.value,
-    count: threadNumber.value,
+    thread_count: threadCount.value,
     brand: brand.value,
     is_c: threadType.value === 'C',
     is_e: threadType.value === 'E',
@@ -40,7 +41,7 @@ const handleAdd = async () => {
   try {
     await useFetch("/threads/create", {
       method: "POST",
-      body: JSON.stringify(newThread)
+      json: newThread
     })
   } catch (e) {
     console.log(e);
@@ -85,8 +86,9 @@ onBeforeUnmount(() => {
         <div>
           <label class="block text-sm font-medium text-gray-400 mb-1">Thread Count</label>
           <input
-              v-model="threadNumber"
+              v-model.number="threadCount"
               type="number"
+              min="0"
               class="w-full bg-gray-700 border border-gray-600 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"
               placeholder="Ex: 2"
           />

@@ -5,5 +5,13 @@ export interface Thread {
     is_e: boolean;
     is_c: boolean;
     brand: string;
-    count: number;
+    thread_count: number;
+}
+
+export interface ThreadDto {
+    thread_id: string;
+    is_e: boolean;
+    is_c: boolean;
+    brand: string;
+    thread_count: number;
 }

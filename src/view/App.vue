@@ -39,7 +39,7 @@ const updateThreadCount = async (thread: Thread, newCount: number) => {
   try {
     await useFetch(`/threads/update/${thread.ID}`, {
       method: "PUT",
-      body: JSON.stringify({ count: newCount })
+      json: { count: newCount }
     });
   } catch (e) {
     console.error(e);
