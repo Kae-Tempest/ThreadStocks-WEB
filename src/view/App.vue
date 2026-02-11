@@ -33,17 +33,17 @@ const refreshThreads = async () => {
 
 const updateThreadCount = async (thread: Thread, newCount: number) => {
   // Optimistic update
-  const oldCount = thread.count;
-  thread.count = newCount;
+  const oldCount = thread.thread_count;
+  thread.thread_count = newCount;
 
   try {
     await useFetch(`/threads/update/${thread.ID}`, {
       method: "PUT",
-      json: { count: newCount }
+      json: { thread_count: newCount }
     });
   } catch (e) {
     console.error(e);
-    thread.count = oldCount; // Rollback
+    thread.thread_count = oldCount; // Rollback
   }
 };
 
