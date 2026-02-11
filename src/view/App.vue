@@ -124,7 +124,7 @@ const toggleAddThreadModal = () => {
       :title="confirmModalConfig.title"
       :message="confirmModalConfig.message"
       @close="isConfirmModalOpen = false"
-      @confirm="async () => { isConfirmModalOpen = false; await confirmModalConfig.onConfirm(); }"
+      @confirm="async () => { isConfirmModalOpen = false; confirmModalConfig.onConfirm(); }"
     />
     
     <div v-if="Threads.length > 0" class="max-w-6xl mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 justify-items-center">
