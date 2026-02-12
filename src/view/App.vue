@@ -116,6 +116,7 @@ const toggleAddThreadModal = () => {
     <AddThreadModal
       :is-open="isAddThreadModalOpen"
       @close="toggleAddThreadModal"
+      @refresh="refreshThreads"
     />
 
     <!-- Confirm modal -->

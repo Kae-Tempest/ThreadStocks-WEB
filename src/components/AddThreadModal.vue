@@ -11,6 +11,7 @@ const props = defineProps<Props>();
 
 const emit = defineEmits<{
   (e: 'close'): void;
+  (e: 'refresh'): void;
 }>();
 
 const threadName = ref('');
@@ -43,6 +44,7 @@ const handleAdd = async () => {
       method: "POST",
       json: newThread
     })
+    emit('refresh')
   } catch (e) {
     console.log(e);
   }
