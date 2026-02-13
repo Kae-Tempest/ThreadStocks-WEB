@@ -1,15 +1,17 @@
 <script setup lang="ts">
 import {onMounted, ref} from 'vue';
 import SettingsModal from '../components/SettingsModal.vue';
-import AddThreadModal from '../components/AddThreadModal.vue';
+import ThreadModal from '../components/ThreadModal.vue';
 import ConfirmModal from '../components/ConfirmModal.vue';
 import {useUserStore} from "../stores/userStore.ts";
 import type {Thread} from "@interfaces/thread.ts";
 import {useFetch} from "@composable/useFetch.ts";
 import ThreadCard from "../components/ThreadCard.vue";
+import {useRouter} from "vue-router";
 
 const isSettingsModalOpen = ref(false);
-const isAddThreadModalOpen = ref(false);
+const isThreadModalOpen = ref(false);
+const selectedThread = ref<Thread | null>(null);
 const isConfirmModalOpen = ref(false);
 const confirmModalConfig = ref({
   title: '',
@@ -17,6 +19,7 @@ const confirmModalConfig = ref({
   onConfirm: () => {}
 });
 const userStore = useUserStore();
+const router = useRouter();
 const Threads = ref<Thread[]>([]);
 
 onMounted(async () => {
@@ -39,7 +42,7 @@ const updateThreadCount = async (thread: Thread, newCount: number) => {
   try {
     await useFetch(`/threads/update/${thread.ID}`, {
       method: "PUT",
-      json: { thread_count: newCount }
+      json: thread
     });
   } catch (e) {
     console.error(e);
@@ -69,9 +72,18 @@ const toggleSettingsModal = () => {
   isSettingsModalOpen.value = !isSettingsModalOpen.value;
 };
 
-const toggleAddThreadModal = () => {
-  isAddThreadModalOpen.value = !isAddThreadModalOpen.value;
+const toggleThreadModal = (thread: Thread | null = null) => {
+  selectedThread.value = thread;
+  isThreadModalOpen.value = !isThreadModalOpen.value;
 };
+
+const useLogOut = async () => {
+  await useFetch("/logout", {
+    method: "POST"
+  })
+  userStore.setUser(null)
+  await router.push('/login')
+}
 
 </script>
 
@@ -83,7 +95,7 @@ const toggleAddThreadModal = () => {
       <div class="flex space-x-4">
         <!-- Add a thread button -->
         <button 
-          @click="toggleAddThreadModal"
+          @click="toggleThreadModal(null)"
           class="p-2 bg-indigo-600 hover:bg-indigo-700 rounded-full transition-colors shadow-lg"
           title="Add a thread"
         >
@@ -109,13 +121,15 @@ const toggleAddThreadModal = () => {
     <!-- Settings modal -->
     <SettingsModal 
       :is-open="isSettingsModalOpen" 
-      @close="toggleSettingsModal" 
+      @close="toggleSettingsModal"
+      @logout="useLogOut"
     />
 
-    <!-- Add thread modal -->
-    <AddThreadModal
-      :is-open="isAddThreadModalOpen"
-      @close="toggleAddThreadModal"
+    <!-- Thread modal (Add/Edit) -->
+    <ThreadModal
+      :is-open="isThreadModalOpen"
+      :thread="selectedThread"
+      @close="isThreadModalOpen = false"
       @refresh="refreshThreads"
     />
 
@@ -135,7 +149,7 @@ const toggleAddThreadModal = () => {
         :thread="thread"
         @update:count="(newCount) => updateThreadCount(thread, newCount)"
         @delete="deleteThread(thread)"
-        @edit="console.log('Edit', thread)"
+        @edit="toggleThreadModal(thread)"
       />
     </div>
 

@@ -1,10 +1,11 @@
 <script setup lang="ts">
-import {ref, onMounted, onBeforeUnmount} from 'vue';
+import {ref, onMounted, onBeforeUnmount, watch} from 'vue';
 import {useFetch} from "@composable/useFetch.ts";
-import type {ThreadDto} from "@interfaces/thread.ts";
+import type {Thread, ThreadDto} from "@interfaces/thread.ts";
 
 type Props = {
   isOpen: boolean;
+  thread?: Thread | null;
 }
 
 const props = defineProps<Props>();
@@ -20,19 +21,31 @@ const brand = ref('');
 const threadType = ref<'C' | 'E' | 'none'>('none');
 
 const resetForm = () => {
-  threadName.value = '';
-  threadCount.value = 0;
-  brand.value = '';
-  threadType.value = 'none';
+  if (props.thread) {
+    threadName.value = props.thread.thread_id;
+    threadCount.value = props.thread.thread_count;
+    brand.value = props.thread.brand;
+    threadType.value = props.thread.is_c ? 'C' : (props.thread.is_e ? 'E' : 'none');
+  } else {
+    threadName.value = '';
+    threadCount.value = 0;
+    brand.value = '';
+    threadType.value = 'none';
+  }
 };
 
+watch(() => props.isOpen, (newVal) => {
+  if (newVal) {
+    resetForm();
+  }
+});
+
 const handleClose = () => {
-  resetForm();
   emit('close');
 };
 
-const handleAdd = async () => {
-  const newThread: ThreadDto = {
+const handleSubmit = async () => {
+  const threadDto: ThreadDto = {
     thread_id: threadName.value,
     thread_count: threadCount.value,
     brand: brand.value,
@@ -40,10 +53,17 @@ const handleAdd = async () => {
     is_e: threadType.value === 'E',
   };
   try {
-    await useFetch("/threads/create", {
-      method: "POST",
-      json: newThread
-    })
+    if (props.thread) {
+      await useFetch(`/threads/update/${props.thread.ID}`, {
+        method: "PUT",
+        json: threadDto
+      });
+    } else {
+      await useFetch("/threads/create", {
+        method: "POST",
+        json: threadDto
+      });
+    }
     emit('refresh')
   } catch (e) {
     console.log(e);
@@ -70,7 +90,7 @@ onBeforeUnmount(() => {
 <template>
   <div v-if="isOpen" class="fixed inset-0 z-50 flex items-center justify-center bg-gray-900/10 backdrop-blur-sm" @click.self="handleClose">
     <div class="bg-gray-800 border border-gray-700 p-8 rounded-lg shadow-2xl max-w-md w-full mx-4 text-white">
-      <h2 class="text-xl font-bold mb-6">Add a thread</h2>
+      <h2 class="text-xl font-bold mb-6">{{ thread ? 'Edit thread' : 'Add a thread' }}</h2>
 
       <div class="space-y-4">
         <!-- Thread Name -->
@@ -159,10 +179,10 @@ onBeforeUnmount(() => {
             Cancel
           </button>
           <button
-              @click="handleAdd"
+              @click="handleSubmit"
               class="flex-1 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 rounded transition-colors text-center font-medium"
           >
-            Add
+            {{ thread ? 'Save' : 'Add' }}
           </button>
         </div>
       </div>

@@ -34,10 +34,6 @@ export const useUserStore = defineStore("userStore", () => {
         }
     };
 
-    // const logoutUser = async () => {
-        // TODO: make logout endpoint for delete cookie ?
-    // };
-
     return {
         user,
         id,
