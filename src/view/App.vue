@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import {onMounted, ref} from 'vue';
 import SettingsModal from '../components/SettingsModal.vue';
+import AccountModal from '../components/AccountModal.vue';
 import ThreadModal from '../components/ThreadModal.vue';
 import ConfirmModal from '../components/ConfirmModal.vue';
 import {useUserStore} from "../stores/userStore.ts";
@@ -10,6 +11,7 @@ import ThreadCard from "../components/ThreadCard.vue";
 import {useRouter} from "vue-router";
 
 const isSettingsModalOpen = ref(false);
+const isAccountModalOpen = ref(false);
 const isThreadModalOpen = ref(false);
 const selectedThread = ref<Thread | null>(null);
 const isConfirmModalOpen = ref(false);
@@ -123,6 +125,13 @@ const useLogOut = async () => {
       :is-open="isSettingsModalOpen" 
       @close="toggleSettingsModal"
       @logout="useLogOut"
+      @open-account="() => { isSettingsModalOpen = false; isAccountModalOpen = true; }"
+    />
+
+    <!-- Account modal -->
+    <AccountModal
+      :is-open="isAccountModalOpen"
+      @close="isAccountModalOpen = false"
     />
 
     <!-- Thread modal (Add/Edit) -->
