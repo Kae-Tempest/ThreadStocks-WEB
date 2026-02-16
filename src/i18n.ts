@@ -5,7 +5,19 @@ const messages = {
     nav: {
       login: 'Login',
       signin: 'Sign In',
-      home: 'Home'
+      home: 'Home',
+      contact: 'Contact'
+    },
+    contact: {
+      title: 'Contact Us',
+      subtitle: 'Have a question or suggestion? Send us a message!',
+      name: 'Name',
+      email: 'Email',
+      subject: 'Subject',
+      message: 'Message',
+      send: 'Send Message',
+      success: 'Message sent successfully!',
+      error: 'An error occurred while sending the message.'
     },
     home: {
       hero: {
@@ -163,7 +175,19 @@ const messages = {
     nav: {
       login: 'Connexion',
       signin: 'S\'inscrire',
-      home: 'Accueil'
+      home: 'Accueil',
+      contact: 'Contact'
+    },
+    contact: {
+      title: 'Nous contacter',
+      subtitle: 'Une question ou une suggestion ? Envoyez-nous un message !',
+      name: 'Nom',
+      email: 'Email',
+      subject: 'Sujet',
+      message: 'Message',
+      send: 'Envoyer le message',
+      success: 'Message envoyé avec succès !',
+      error: 'Une erreur est survenue lors de l\'envoi du message.'
     },
     home: {
       hero: {
@@ -319,9 +343,11 @@ const messages = {
   }
 }
 
+const savedLocale = localStorage.getItem('locale') || 'en'
+
 export const i18n = createI18n({
   legacy: false,
-  locale: 'en',
+  locale: savedLocale,
   fallbackLocale: 'en',
   messages,
 })

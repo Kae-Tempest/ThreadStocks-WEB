@@ -16,6 +16,7 @@ const displayId = computed(() => {
   let prefix = '';
   if (props.thread.is_c) prefix = 'C ';
   else if (props.thread.is_e) prefix = 'E ';
+  else if (props.thread.is_s) prefix = 'S ';
   return `${prefix}${props.thread.thread_id}`;
 });
 

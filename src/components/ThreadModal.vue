@@ -18,14 +18,14 @@ const emit = defineEmits<{
 const threadName = ref('');
 const threadCount = ref<number>(0);
 const brand = ref('');
-const threadType = ref<'C' | 'E' | 'none'>('none');
+const threadType = ref<'C' | 'E' | 'S' | 'none'>('none');
 
 const resetForm = () => {
   if (props.thread) {
     threadName.value = props.thread.thread_id;
     threadCount.value = props.thread.thread_count;
     brand.value = props.thread.brand;
-    threadType.value = props.thread.is_c ? 'C' : (props.thread.is_e ? 'E' : 'none');
+    threadType.value = props.thread.is_c ? 'C' : (props.thread.is_e ? 'E' : (props.thread.is_s ? 'S' : 'none'));
   } else {
     threadName.value = '';
     threadCount.value = 0;
@@ -51,6 +51,7 @@ const handleSubmit = async () => {
     brand: brand.value,
     is_c: threadType.value === 'C',
     is_e: threadType.value === 'E',
+    is_s: threadType.value === 'S',
   };
   try {
     if (props.thread) {
@@ -130,7 +131,7 @@ onBeforeUnmount(() => {
         <!-- Thread Type (Segmented Control) -->
         <div class="space-y-2">
           <label class="block text-sm font-medium text-gray-400">{{ $t('modals.thread.type') }}</label>
-          <div class="grid grid-cols-3 gap-2">
+          <div class="grid grid-cols-4 gap-2">
             <button
                 type="button"
                 @click="threadType = 'C'"
@@ -154,6 +155,18 @@ onBeforeUnmount(() => {
               ]"
             >
               E
+            </button>
+            <button
+                type="button"
+                @click="threadType = 'S'"
+                :class="[
+                'px-4 py-2 rounded-md border transition-all text-sm font-medium',
+                threadType === 'S' 
+                  ? 'bg-indigo-600 border-indigo-500 text-white shadow-lg shadow-indigo-500/20' 
+                  : 'bg-gray-700 border-gray-600 text-gray-300 hover:bg-gray-600'
+              ]"
+            >
+              S
             </button>
             <button
                 type="button"

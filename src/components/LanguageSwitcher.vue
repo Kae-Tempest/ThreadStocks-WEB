@@ -5,6 +5,7 @@ const { locale } = useI18n()
 
 const toggleLanguage = () => {
   locale.value = locale.value === 'en' ? 'fr' : 'en'
+  localStorage.setItem('locale', locale.value)
 }
 </script>
 

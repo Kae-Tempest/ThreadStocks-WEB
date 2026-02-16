@@ -4,6 +4,7 @@ export interface Thread {
     thread_id: string;
     is_e: boolean;
     is_c: boolean;
+    is_s: boolean;
     brand: string;
     thread_count: number;
 }
@@ -12,6 +13,7 @@ export interface ThreadDto {
     thread_id: string;
     is_e: boolean;
     is_c: boolean;
+    is_s: boolean;
     brand: string;
     thread_count: number;
 }
