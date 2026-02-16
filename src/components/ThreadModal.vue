@@ -90,12 +90,12 @@ onBeforeUnmount(() => {
 <template>
   <div v-if="isOpen" class="fixed inset-0 z-50 flex items-center justify-center bg-gray-900/10 backdrop-blur-sm" @click.self="handleClose">
     <div class="bg-gray-800 border border-gray-700 p-8 rounded-lg shadow-2xl max-w-md w-full mx-4 text-white">
-      <h2 class="text-xl font-bold mb-6">{{ thread ? 'Edit thread' : 'Add a thread' }}</h2>
+      <h2 class="text-xl font-bold mb-6">{{ thread ? $t('modals.thread.editTitle') : $t('modals.thread.addTitle') }}</h2>
 
       <div class="space-y-4">
         <!-- Thread Name -->
         <div>
-          <label class="block text-sm font-medium text-gray-400 mb-1">Thread Name</label>
+          <label class="block text-sm font-medium text-gray-400 mb-1">{{ $t('modals.thread.name') }}</label>
           <input
               v-model="threadName"
               type="text"
@@ -106,7 +106,7 @@ onBeforeUnmount(() => {
 
         <!-- Thread Number -->
         <div>
-          <label class="block text-sm font-medium text-gray-400 mb-1">Thread Count</label>
+          <label class="block text-sm font-medium text-gray-400 mb-1">{{ $t('modals.thread.count') }}</label>
           <input
               v-model.number="threadCount"
               type="number"
@@ -118,7 +118,7 @@ onBeforeUnmount(() => {
 
         <!-- Brand -->
         <div>
-          <label class="block text-sm font-medium text-gray-400 mb-1">Brand</label>
+          <label class="block text-sm font-medium text-gray-400 mb-1">{{ $t('modals.thread.brand') }}</label>
           <input
               v-model="brand"
               type="text"
@@ -129,7 +129,7 @@ onBeforeUnmount(() => {
 
         <!-- Thread Type (Segmented Control) -->
         <div class="space-y-2">
-          <label class="block text-sm font-medium text-gray-400">Thread type</label>
+          <label class="block text-sm font-medium text-gray-400">{{ $t('modals.thread.type') }}</label>
           <div class="grid grid-cols-3 gap-2">
             <button
                 type="button"
@@ -165,7 +165,7 @@ onBeforeUnmount(() => {
                   : 'bg-gray-700 border-gray-600 text-gray-300 hover:bg-gray-600'
               ]"
             >
-              None
+              {{ $t('modals.thread.none') }}
             </button>
           </div>
         </div>
@@ -176,13 +176,13 @@ onBeforeUnmount(() => {
               @click="handleClose"
               class="flex-1 px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded transition-colors text-center font-medium"
           >
-            Cancel
+            {{ $t('modals.common.cancel') }}
           </button>
           <button
               @click="handleSubmit"
               class="flex-1 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 rounded transition-colors text-center font-medium"
           >
-            {{ thread ? 'Save' : 'Add' }}
+            {{ thread ? $t('modals.common.save') : $t('modals.common.add') }}
           </button>
         </div>
       </div>

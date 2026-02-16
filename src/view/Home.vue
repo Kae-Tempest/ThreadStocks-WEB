@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import LanguageSwitcher from '../components/LanguageSwitcher.vue';
 </script>
 
 <template>
@@ -12,18 +13,19 @@
               ThreadStocks
             </span>
           </div>
-          <div class="flex space-x-4">
+          <div class="flex items-center space-x-4">
+            <LanguageSwitcher />
             <router-link
               to="/login"
               class="px-4 py-2 text-sm font-medium text-gray-300 hover:text-white transition-colors"
             >
-              Login
+              {{ $t('nav.login') }}
             </router-link>
             <router-link
               to="/register"
               class="px-4 py-2 text-sm font-medium bg-indigo-600 hover:bg-indigo-700 rounded-md transition-colors shadow-lg"
             >
-              Sign In
+              {{ $t('nav.signin') }}
             </router-link>
           </div>
         </div>
@@ -34,23 +36,27 @@
     <header class="pt-32 pb-16 px-4">
       <div class="max-w-7xl mx-auto text-center">
         <h1 class="text-5xl md:text-7xl font-extrabold mb-6 tracking-tight">
-          Manage your <span class="text-indigo-500">thread</span> inventory smartly
+          <i18n-t keypath="home.hero.title" scope="global">
+            <template #span>
+              <span class="text-indigo-500">{{ $t('home.hero.thread') }}</span>
+            </template>
+          </i18n-t>
         </h1>
         <p class="text-xl text-gray-400 max-w-2xl mx-auto mb-10">
-          ThreadStocks helps you track your embroidery, sewing, or knitting thread stocks. Never run out of the perfect color for your projects again.
+          {{ $t('home.hero.subtitle') }}
         </p>
         <div class="flex flex-col sm:flex-row justify-center gap-4">
           <router-link
             to="/register"
             class="px-8 py-4 bg-indigo-600 hover:bg-indigo-700 rounded-lg font-bold text-lg transition-all transform hover:scale-105 shadow-xl"
           >
-            Start for free
+            {{ $t('home.hero.startFree') }}
           </router-link>
           <router-link
             to="/features"
             class="px-8 py-4 bg-gray-800 hover:bg-gray-700 rounded-lg font-bold text-lg border border-gray-700 transition-all"
           >
-            Learn more
+            {{ $t('home.hero.learnMore') }}
           </router-link>
         </div>
       </div>
@@ -60,7 +66,7 @@
     <main id="features" class="py-20 bg-gray-800/30">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="text-center mb-16">
-          <h2 class="text-3xl md:text-4xl font-bold mb-4">Why use ThreadStocks?</h2>
+          <h2 class="text-3xl md:text-4xl font-bold mb-4">{{ $t('home.why.title') }}</h2>
           <div class="h-1 w-20 bg-indigo-500 mx-auto"></div>
         </div>
 
@@ -72,9 +78,9 @@
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
               </svg>
             </div>
-            <h3 class="text-xl font-bold mb-4">Complete Inventory</h3>
+            <h3 class="text-xl font-bold mb-4">{{ $t('home.why.feature1.title') }}</h3>
             <p class="text-gray-400">
-              List all your threads with their references, brands, and exact quantities.
+              {{ $t('home.why.feature1.desc') }}
             </p>
           </div>
 
@@ -85,9 +91,9 @@
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
               </svg>
             </div>
-            <h3 class="text-xl font-bold mb-4">Fast Updates</h3>
+            <h3 class="text-xl font-bold mb-4">{{ $t('home.why.feature2.title') }}</h3>
             <p class="text-gray-400">
-              Adjust your stocks in one click after each creation session to keep your data up to date.
+              {{ $t('home.why.feature2.desc') }}
             </p>
           </div>
 
@@ -98,9 +104,9 @@
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
               </svg>
             </div>
-            <h3 class="text-xl font-bold mb-4">Access Anywhere</h3>
+            <h3 class="text-xl font-bold mb-4">{{ $t('home.why.feature3.title') }}</h3>
             <p class="text-gray-400">
-              Check your stock from your mobile when you're at the store to avoid duplicates.
+              {{ $t('home.why.feature3.desc') }}
             </p>
           </div>
         </div>
@@ -109,7 +115,7 @@
 
     <!-- Footer -->
     <footer class="py-12 border-t border-gray-800 text-center text-gray-500 text-sm">
-      <p>&copy; 2026 ThreadStocks. All rights reserved.</p>
+      <p>&copy; 2026 ThreadStocks. {{ $t('footer.rights') }}</p>
     </footer>
   </div>
 </template>

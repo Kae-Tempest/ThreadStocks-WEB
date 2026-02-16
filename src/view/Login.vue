@@ -3,6 +3,7 @@ import {ref} from 'vue';
 import { useFetch} from "@composable/useFetch.ts";
 import type {Login} from "@interfaces/auth.ts";
 import {useRouter} from "vue-router";
+import LanguageSwitcher from '../components/LanguageSwitcher.vue';
 
 const router = useRouter()
 
@@ -30,12 +31,15 @@ const handleLogin = async () => {
 </script>
 
 <template>
-  <div class="flex items-center justify-center min-h-screen">
+  <div class="flex flex-col items-center justify-center min-h-screen">
+    <div class="mb-6">
+      <LanguageSwitcher />
+    </div>
     <div class="w-full max-w-md p-8 space-y-6 bg-gray-800/50 backdrop-blur-sm rounded shadow-md border border-gray-700">
-      <h2 class="text-2xl font-bold text-center text-white">Login</h2>
+      <h2 class="text-2xl font-bold text-center text-white">{{ $t('auth.login.title') }}</h2>
       <form class="space-y-4" @submit.prevent="handleLogin">
         <div>
-          <label for="email" class="block text-sm font-medium text-gray-300">Email</label>
+          <label for="email" class="block text-sm font-medium text-gray-300">{{ $t('auth.login.email') }}</label>
           <input
               id="email"
               v-model="payload.email"
@@ -47,7 +51,7 @@ const handleLogin = async () => {
           />
         </div>
         <div class="relative">
-          <label for="password" class="block text-sm font-medium text-gray-300">Password</label>
+          <label for="password" class="block text-sm font-medium text-gray-300">{{ $t('auth.login.password') }}</label>
           <div class="relative">
             <input
                 id="password"
@@ -78,13 +82,13 @@ const handleLogin = async () => {
               type="submit"
               class="w-full px-4 py-2 font-bold text-white bg-indigo-600 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring focus:ring-indigo-500/50 transition-colors"
           >
-            Sign In
+            {{ $t('auth.login.submit') }}
           </button>
         </div>
       </form>
       <p class="text-sm text-center text-gray-400">
-        Don't have an account?
-        <router-link to="/register" class="font-medium text-indigo-400 hover:text-indigo-300">Register</router-link>
+        {{ $t('auth.login.noAccount') }}
+        <router-link to="/register" class="font-medium text-indigo-400 hover:text-indigo-300">{{ $t('auth.login.register') }}</router-link>
       </p>
     </div>
   </div>
