@@ -8,6 +8,7 @@ import Register from "./view/Register.vue";
 import Contact from "./view/Contact.vue";
 import NotFound from "./view/NotFound.vue";
 import App from './view/App.vue'
+import ResetPassword from './view/ResetPassword.vue'
 
 const routes = [
     { path: '/:pathMatch(.*)*', name: "NotFound", component: NotFound },
@@ -15,6 +16,7 @@ const routes = [
     { path: '/features', component: Features},
     { path: '/login', component: Login, name: 'Login'},
     { path: '/register', component: Register},
+    { path: '/reset-password', component: ResetPassword},
     { path: '/contact', component: Contact},
     { path: '/app', component: App}
 ]

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue';
+import { useFetch } from "@composable/useFetch.ts";
 import PublicNavbar from '../components/PublicNavbar.vue';
 import PublicFooter from '../components/PublicFooter.vue';
 
@@ -12,21 +13,36 @@ const form = ref({
 
 const submitted = ref(false);
 const error = ref(false);
+const loading = ref(false);
 
-const handleSubmit = () => {
-  // Pour l'instant, on simule un envoi réussi
-  console.log('Form submitted:', form.value);
-  submitted.value = true;
-  form.value = {
-    name: '',
-    email: '',
-    subject: '',
-    message: ''
-  };
+const handleSubmit = async () => {
+  loading.value = true;
+  error.value = false;
+  submitted.value = false;
   
-  setTimeout(() => {
-    submitted.value = false;
-  }, 5000);
+  try {
+    await useFetch('/contact', {
+      method: "POST",
+      body: JSON.stringify(form.value),
+    });
+    
+    submitted.value = true;
+    form.value = {
+      name: '',
+      email: '',
+      subject: '',
+      message: ''
+    };
+    
+    setTimeout(() => {
+      submitted.value = false;
+    }, 5000);
+  } catch (err) {
+    console.error('Contact failed:', err);
+    error.value = true;
+  } finally {
+    loading.value = false;
+  }
 };
 </script>
 
@@ -105,9 +121,11 @@ const handleSubmit = () => {
 
             <button
               type="submit"
-              class="w-full py-4 bg-indigo-600 hover:bg-indigo-700 rounded-lg font-bold text-lg transition-all transform hover:scale-[1.02] shadow-xl"
+              :disabled="loading"
+              class="w-full py-4 bg-indigo-600 hover:bg-indigo-700 rounded-lg font-bold text-lg transition-all transform hover:scale-[1.02] shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {{ $t('contact.send') }}
+              <span v-if="loading">{{ $t('contact.sending') }}</span>
+              <span v-else>{{ $t('contact.send') }}</span>
             </button>
           </form>
         </div>

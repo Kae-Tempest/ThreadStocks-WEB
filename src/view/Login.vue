@@ -3,9 +3,11 @@ import {ref} from 'vue';
 import { useFetch} from "@composable/useFetch.ts";
 import type {Login} from "@interfaces/auth.ts";
 import {useRouter} from "vue-router";
+import { useI18n } from 'vue-i18n';
 import LanguageSwitcher from '../components/LanguageSwitcher.vue';
 
 const router = useRouter()
+const { t } = useI18n();
 
 const payload = ref<Login>({
   email: "",
@@ -13,6 +15,11 @@ const payload = ref<Login>({
 });
 
 const showPassword = ref(false);
+const showForgotModal = ref(false);
+const forgotEmail = ref("");
+const forgotLoading = ref(false);
+const forgotMessage = ref("");
+const forgotError = ref("");
 
 
 const handleLogin = async () => {
@@ -27,6 +34,30 @@ const handleLogin = async () => {
     console.error('Login failed:', error);
   }
 }
+
+const handleForgotPassword = async () => {
+  forgotLoading.value = true;
+  forgotError.value = "";
+  forgotMessage.value = "";
+  try {
+    await useFetch('/forgot-password', {
+      method: "POST",
+      body: JSON.stringify({ email: forgotEmail.value }),
+    });
+    forgotMessage.value = t('auth.forgotPassword.success');
+    setTimeout(() => {
+      if (!forgotError.value) {
+        showForgotModal.value = false;
+        forgotMessage.value = "";
+        forgotEmail.value = "";
+      }
+    }, 5000);
+  } catch (err) {
+    forgotError.value = t('auth.forgotPassword.error');
+  } finally {
+    forgotLoading.value = false;
+  }
+};
 
 </script>
 
@@ -51,7 +82,12 @@ const handleLogin = async () => {
           />
         </div>
         <div class="relative">
-          <label for="password" class="block text-sm font-medium text-gray-300">{{ $t('auth.login.password') }}</label>
+          <div class="flex items-center justify-between">
+            <label for="password" class="block text-sm font-medium text-gray-300">{{ $t('auth.login.password') }}</label>
+            <button type="button" @click="showForgotModal = true" class="text-xs font-medium text-indigo-400 hover:text-indigo-300 transition-colors">
+              {{ $t('auth.login.forgotPassword') }}
+            </button>
+          </div>
           <div class="relative">
             <input
                 id="password"
@@ -90,6 +126,54 @@ const handleLogin = async () => {
         {{ $t('auth.login.noAccount') }}
         <router-link to="/register" class="font-medium text-indigo-400 hover:text-indigo-300">{{ $t('auth.login.register') }}</router-link>
       </p>
+    </div>
+
+    <!-- Forgot Password Modal -->
+    <div v-if="showForgotModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+      <div class="w-full max-w-md p-8 space-y-6 bg-gray-800 rounded-xl shadow-2xl border border-gray-700 animate-in fade-in zoom-in duration-200">
+        <div class="flex items-center justify-between">
+          <h3 class="text-xl font-bold text-white">{{ $t('auth.forgotPassword.title') }}</h3>
+          <button @click="showForgotModal = false" class="text-gray-400 hover:text-white transition-colors">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+        
+        <p class="text-gray-400 text-sm">
+          {{ $t('auth.forgotPassword.desc') }}
+        </p>
+
+        <form @submit.prevent="handleForgotPassword" class="space-y-4">
+          <div v-if="forgotMessage" class="p-3 text-sm text-green-400 bg-green-500/10 border border-green-500/50 rounded-lg">
+            {{ forgotMessage }}
+          </div>
+          <div v-if="forgotError" class="p-3 text-sm text-red-400 bg-red-500/10 border border-red-500/50 rounded-lg">
+            {{ forgotError }}
+          </div>
+
+          <div>
+            <label for="forgot-email" class="block text-sm font-medium text-gray-300">{{ $t('auth.forgotPassword.email') }}</label>
+            <input
+              id="forgot-email"
+              v-model="forgotEmail"
+              type="email"
+              required
+              class="w-full px-3 py-2 mt-1 bg-gray-700 border border-gray-600 rounded-md text-white focus:outline-none focus:ring focus:ring-indigo-500/50 placeholder-gray-400"
+              placeholder="you@example.com"
+            />
+          </div>
+
+          <button
+            type="submit"
+            :disabled="forgotLoading"
+            class="w-full px-4 py-2 font-bold text-white bg-indigo-600 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring focus:ring-indigo-500/50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            <span v-if="forgotLoading">{{ $t('auth.forgotPassword.sending') }}</span>
+            <span v-else>{{ $t('auth.forgotPassword.send') }}</span>
+          </button>
+        </form>
+      </div>
     </div>
   </div>
 </template>

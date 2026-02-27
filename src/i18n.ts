@@ -16,6 +16,7 @@ const messages = {
       subject: 'Subject',
       message: 'Message',
       send: 'Send Message',
+      sending: 'Sending...',
       success: 'Message sent successfully!',
       error: 'An error occurred while sending the message.'
     },
@@ -85,9 +86,31 @@ const messages = {
         title: 'Login',
         email: 'Email',
         password: 'Password',
+        forgotPassword: 'Forgot password?',
         submit: 'Sign In',
         noAccount: "Don't have an account?",
         register: 'Register'
+      },
+      forgotPassword: {
+        title: 'Reset Password',
+        desc: 'Enter your email address and we will send you a link to reset your password.',
+        email: 'Email',
+        sending: 'Sending...',
+        send: 'Send link',
+        success: 'If an account exists for this email, a reset link has been sent.',
+        error: 'An error occurred while sending the email.'
+      },
+      resetPassword: {
+        title: 'New Password',
+        newPassword: 'New Password',
+        confirmPassword: 'Confirm Password',
+        showPassword: 'Show password',
+        submitting: 'Resetting...',
+        submit: 'Change Password',
+        success: 'Your password has been reset successfully. Redirecting to login...',
+        error: 'The link is invalid or has expired.',
+        tokenMissing: 'The reset token is missing.',
+        mismatch: 'Passwords do not match.'
       },
       register: {
         title: 'Create Account',
@@ -186,6 +209,7 @@ const messages = {
       subject: 'Sujet',
       message: 'Message',
       send: 'Envoyer le message',
+      sending: 'Envoi en cours...',
       success: 'Message envoyé avec succès !',
       error: 'Une erreur est survenue lors de l\'envoi du message.'
     },
@@ -255,9 +279,31 @@ const messages = {
         title: 'Connexion',
         email: 'Email',
         password: 'Mot de passe',
+        forgotPassword: 'Mot de passe oublié ?',
         submit: 'Se connecter',
         noAccount: 'Vous n\'avez pas de compte ?',
         register: 'S\'inscrire'
+      },
+      forgotPassword: {
+        title: 'Réinitialiser le mot de passe',
+        desc: 'Entrez votre adresse email et nous vous enverrons un lien pour réinitialiser votre mot de passe.',
+        email: 'Email',
+        sending: 'Envoi en cours...',
+        send: 'Envoyer le lien',
+        success: 'Si un compte existe pour cet email, un lien de réinitialisation a été envoyé.',
+        error: 'Une erreur est survenue lors de l\'envoi de l\'email.'
+      },
+      resetPassword: {
+        title: 'Nouveau mot de passe',
+        newPassword: 'Nouveau mot de passe',
+        confirmPassword: 'Confirmer le mot de passe',
+        showPassword: 'Afficher le mot de passe',
+        submitting: 'Réinitialisation...',
+        submit: 'Changer le mot de passe',
+        success: 'Votre mot de passe a été réinitialisé avec succès. Redirection vers la page de connexion...',
+        error: 'Le lien est invalide ou a expiré.',
+        tokenMissing: 'Le jeton de réinitialisation est manquant.',
+        mismatch: 'Les mots de passe ne correspondent pas.'
       },
       register: {
         title: 'Créer un compte',
